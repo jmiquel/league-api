@@ -14,6 +14,8 @@ class Player {
     const [err, player] = await to(prisma.players())
     if (err) return new Error(err)
 
+    console.log('player :', player);
+
     return player
   }
   
