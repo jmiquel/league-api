@@ -6,8 +6,7 @@
     "start": "node src/index.js"
   },
   "engines": {
-    "node": ">=8.0.0",
-    "yarn": ">=1.9.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
     "await-to-js": "^2.1.1",
