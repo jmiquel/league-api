@@ -1,0 +1,17 @@
+{
+  "name": "rest-express",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "1.18.3",
+    "express": "4.16.4",
+    "prisma-client-lib": "1.22.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}

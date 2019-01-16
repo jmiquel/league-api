@@ -1,0 +1,27 @@
+type Player {
+  id: ID! @unique
+  name: String!
+  streak: [Boolean]
+}
+
+type Result {
+  id: ID! @unique
+  season: Int!
+  category: Category!
+  division: Division!
+  winner: Player! @relation(name: "Winner")
+  loser: Player! @relation(name: "Loser")
+  points: Int!
+  createdAt: DateTime!
+}
+
+enum Category {
+  FUSSBALL
+  PINGPONG
+}
+
+enum Division {
+  A
+  B
+  C
+}
