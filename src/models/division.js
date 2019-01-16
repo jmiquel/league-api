@@ -1,17 +1,23 @@
 const { prisma } = require('../generated/prisma-client')
+const to = require('await-to-js').default
 const Player = require('./player')
 
 class Division {
-  async getDivisionResults(divisionName) {
+  async getDivisionMatches(divisionName) {
     const filter = { where: { division: divisionName } }
-    const results = await prisma
+    const [errResults, results] = await to(prisma.results(filter))
+    if(errResults) return 'Connection problem';
+
+    const [errLosers, losers] = await to(prisma
       .results(filter)
-    const losers = await prisma
+      .loser())
+    if(errLosers) return 'Connection problem';
+
+    const [errWinners, winners] = await to(prisma
       .results(filter)
-      .loser()
-    const winners = await prisma
-      .results(filter)
-      .winner()
+      .winner())
+    if(errWinners) return 'Connection problem';
+    
     
     const response = results.map((result, idx) => {
       return {
@@ -24,76 +30,71 @@ class Division {
     return response
   }
 
-  async getDivisionStandings (division) {
+  async getDivisionResults (division) {
     const response = []
 
     for (const result of division) {
       const winner = await Player.getPlayer(result.winner)
       const loser = await Player.getPlayer(result.loser)
-      const score = {
-        winner: winner[0].name,
-        winnerId: winner[0].id,
-        loser: loser[0].name,
-        loserId: loser[0].id,
-        points: result.points 
+      const game = {
+        season: result.season,
+        division: result.division,
+        points: result.points,
+        category: result.category,
+        loser: {
+          id: loser[0].id,
+          name: loser[0].name
+        },
+        winner: {
+          id: winner[0].id,
+          name: winner[0].name
+        }
       }
 
-      response.push(score)
+      response.push(game)
     }
 
     return response
   }
 
-  async generateLeague(divisionResults) {
+  async generateLeague(players) {
     const league = []
 
-    for(let result of divisionResults) {
-      const winnerIdx = league.findIndex(player => player.name === result.winner)
-      const loserIdx = league.findIndex(player => player.name === result.loser)
-      if (winnerIdx === -1) {
-        league.push({
-          id: result.winnerId,
-          name: result.winner,
-          points: 0,
-          streak: []
-        })
-      }
-
-      if (loserIdx === -1) {
-        const lastFive = await Player.getPlayerLastFive(result.loserId)
-        league.push({
-          id: result.loserId,
-          name: result.loser,
-          points: 0,
-          streak: lastFive
-        })
-      }
+    for(let player of players) {
+      league.push({
+        id: player.id,
+        games: 0,
+        name: player.name,
+        points: 0,
+        streak: []
+      })
     }
 
     return league
   }
 
-  async getDivisionTotals(divisionResults) {
-    const league = await this.generateLeague(divisionResults)
+  async getDivisionTotals(division, results) {
+    const players = await Player.getPlayersByDivision(division)
+    const league = await this.generateLeague(players)
 
     //Group by name and sum points
-    for(let result of divisionResults) {
-      const winnerIdx = league.findIndex(player => player.name === result.winner)
+    for(let result of results) {
+      const winnerIdx = league.findIndex(player => player.name === result.winner.name)
+      const loserIdx = league.findIndex(player => player.name === result.loser.name)
       if (winnerIdx > -1) {
-        const lastFive = await Player.getPlayerLastFive(league[winnerIdx].id)
+        const winnerLastFive = await Player.getPlayerLastFive(league[winnerIdx].id)
+        const loserLastFive = await Player.getPlayerLastFive(league[loserIdx].id)
+        const winnerTotalGames = await Player.getPlayerGames(league[winnerIdx].id)
+        const loserTotalGames = await Player.getPlayerGames(league[loserIdx].id)
         league[winnerIdx].points += result.points
-        league[winnerIdx].streak = lastFive
-      } else {
-        const lastFive = await Player.getPlayerLastFive(league[winnerIdx].id)
-        league.push({
-          name: result.winner,
-          points: result.points,
-          streak: lastFive
-        })
+        league[winnerIdx].games = winnerTotalGames
+        league[winnerIdx].streak = winnerLastFive
+        league[loserIdx].games = loserTotalGames
+        league[loserIdx].streak = loserLastFive
       }
     }
 
-    return league.sort((a, b) => b.points - a.points)
+    return league.sort((a, b) => b.points - a.points || (b.games === a.games ? a.name.localeCompare(b.name) : b.games < a.games))
   }
 }
 

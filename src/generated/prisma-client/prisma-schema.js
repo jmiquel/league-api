@@ -62,6 +62,7 @@ type Player {
   id: ID!
   name: String!
   streak: [Boolean!]!
+  division: Division
 }
 
 type PlayerConnection {
@@ -73,6 +74,7 @@ type PlayerConnection {
 input PlayerCreateInput {
   name: String!
   streak: PlayerCreatestreakInput
+  division: Division
 }
 
 input PlayerCreateOneInput {
@@ -94,6 +96,8 @@ enum PlayerOrderByInput {
   id_DESC
   name_ASC
   name_DESC
+  division_ASC
+  division_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -104,6 +108,7 @@ type PlayerPreviousValues {
   id: ID!
   name: String!
   streak: [Boolean!]!
+  division: Division
 }
 
 type PlayerSubscriptionPayload {
@@ -127,16 +132,19 @@ input PlayerSubscriptionWhereInput {
 input PlayerUpdateDataInput {
   name: String
   streak: PlayerUpdatestreakInput
+  division: Division
 }
 
 input PlayerUpdateInput {
   name: String
   streak: PlayerUpdatestreakInput
+  division: Division
 }
 
 input PlayerUpdateManyMutationInput {
   name: String
   streak: PlayerUpdatestreakInput
+  division: Division
 }
 
 input PlayerUpdateOneRequiredInput {
@@ -184,6 +192,10 @@ input PlayerWhereInput {
   name_not_starts_with: String
   name_ends_with: String
   name_not_ends_with: String
+  division: Division
+  division_not: Division
+  division_in: [Division!]
+  division_not_in: [Division!]
   AND: [PlayerWhereInput!]
   OR: [PlayerWhereInput!]
   NOT: [PlayerWhereInput!]

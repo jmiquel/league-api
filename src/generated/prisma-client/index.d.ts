@@ -142,17 +142,19 @@ export interface ClientConstructor<T> {
  * Types
  */
 
-export type Category = "FUSSBALL" | "PINGPONG";
-
 export type PlayerOrderByInput =
   | "id_ASC"
   | "id_DESC"
   | "name_ASC"
   | "name_DESC"
+  | "division_ASC"
+  | "division_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
   | "updatedAt_DESC";
+
+export type Category = "FUSSBALL" | "PINGPONG";
 
 export type Division = "A" | "B" | "C";
 
@@ -174,13 +176,19 @@ export type ResultOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export type ResultWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
+export interface ResultUpdateInput {
+  season?: Int;
+  category?: Category;
+  division?: Division;
+  winner?: PlayerUpdateOneRequiredInput;
+  loser?: PlayerUpdateOneRequiredInput;
+  points?: Int;
+}
 
 export interface PlayerCreateInput {
   name: String;
   streak?: PlayerCreatestreakInput;
+  division?: Division;
 }
 
 export interface ResultCreateInput {
@@ -250,9 +258,11 @@ export interface ResultWhereInput {
   NOT?: ResultWhereInput[] | ResultWhereInput;
 }
 
-export interface PlayerUpsertNestedInput {
-  update: PlayerUpdateDataInput;
-  create: PlayerCreateInput;
+export interface ResultUpdateManyMutationInput {
+  season?: Int;
+  category?: Category;
+  division?: Division;
+  points?: Int;
 }
 
 export interface PlayerSubscriptionWhereInput {
@@ -266,11 +276,10 @@ export interface PlayerSubscriptionWhereInput {
   NOT?: PlayerSubscriptionWhereInput[] | PlayerSubscriptionWhereInput;
 }
 
-export interface PlayerUpdateOneRequiredInput {
-  create?: PlayerCreateInput;
-  update?: PlayerUpdateDataInput;
-  upsert?: PlayerUpsertNestedInput;
-  connect?: PlayerWhereUniqueInput;
+export interface PlayerUpdateDataInput {
+  name?: String;
+  streak?: PlayerUpdatestreakInput;
+  division?: Division;
 }
 
 export interface ResultSubscriptionWhereInput {
@@ -291,6 +300,7 @@ export interface PlayerCreatestreakInput {
 export interface PlayerUpdateInput {
   name?: String;
   streak?: PlayerUpdatestreakInput;
+  division?: Division;
 }
 
 export interface PlayerUpdatestreakInput {
@@ -300,25 +310,23 @@ export interface PlayerUpdatestreakInput {
 export interface PlayerUpdateManyMutationInput {
   name?: String;
   streak?: PlayerUpdatestreakInput;
+  division?: Division;
 }
 
-export interface PlayerCreateOneInput {
+export type ResultWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface PlayerUpdateOneRequiredInput {
   create?: PlayerCreateInput;
+  update?: PlayerUpdateDataInput;
+  upsert?: PlayerUpsertNestedInput;
   connect?: PlayerWhereUniqueInput;
 }
 
-export interface ResultUpdateInput {
-  season?: Int;
-  category?: Category;
-  division?: Division;
-  winner?: PlayerUpdateOneRequiredInput;
-  loser?: PlayerUpdateOneRequiredInput;
-  points?: Int;
-}
-
-export interface PlayerUpdateDataInput {
-  name?: String;
-  streak?: PlayerUpdatestreakInput;
+export interface PlayerUpsertNestedInput {
+  update: PlayerUpdateDataInput;
+  create: PlayerCreateInput;
 }
 
 export interface PlayerWhereInput {
@@ -350,16 +358,18 @@ export interface PlayerWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
+  division?: Division;
+  division_not?: Division;
+  division_in?: Division[] | Division;
+  division_not_in?: Division[] | Division;
   AND?: PlayerWhereInput[] | PlayerWhereInput;
   OR?: PlayerWhereInput[] | PlayerWhereInput;
   NOT?: PlayerWhereInput[] | PlayerWhereInput;
 }
 
-export interface ResultUpdateManyMutationInput {
-  season?: Int;
-  category?: Category;
-  division?: Division;
-  points?: Int;
+export interface PlayerCreateOneInput {
+  create?: PlayerCreateInput;
+  connect?: PlayerWhereUniqueInput;
 }
 
 export interface NodeNode {
@@ -481,6 +491,7 @@ export interface PlayerPreviousValues {
   id: ID_Output;
   name: String;
   streak: Boolean[];
+  division?: Division;
 }
 
 export interface PlayerPreviousValuesPromise
@@ -489,6 +500,7 @@ export interface PlayerPreviousValuesPromise
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   streak: () => Promise<Boolean[]>;
+  division: () => Promise<Division>;
 }
 
 export interface PlayerPreviousValuesSubscription
@@ -497,18 +509,21 @@ export interface PlayerPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   streak: () => Promise<AsyncIterator<Boolean[]>>;
+  division: () => Promise<AsyncIterator<Division>>;
 }
 
 export interface Player {
   id: ID_Output;
   name: String;
   streak: Boolean[];
+  division?: Division;
 }
 
 export interface PlayerPromise extends Promise<Player>, Fragmentable {
   id: () => Promise<ID_Output>;
   name: () => Promise<String>;
   streak: () => Promise<Boolean[]>;
+  division: () => Promise<Division>;
 }
 
 export interface PlayerSubscription
@@ -517,6 +532,7 @@ export interface PlayerSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   name: () => Promise<AsyncIterator<String>>;
   streak: () => Promise<AsyncIterator<Boolean[]>>;
+  division: () => Promise<AsyncIterator<Division>>;
 }
 
 export interface ResultConnection {}

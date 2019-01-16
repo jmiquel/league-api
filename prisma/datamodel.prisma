@@ -2,6 +2,7 @@ type Player {
   id: ID! @unique
   name: String!
   streak: [Boolean]
+  division: Division
 }
 
 type Result {
