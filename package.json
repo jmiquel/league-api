@@ -2,6 +2,9 @@
   "name": "rest-express",
   "version": "1.0.0",
   "license": "MIT",
+  "engines": {
+    "yarn": ">=1.9.0"
+  },
   "scripts": {
     "start": "node src/index.js"
   },
