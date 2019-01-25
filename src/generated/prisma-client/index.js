@@ -24,7 +24,7 @@ var models = [
 exports.Prisma = prisma_lib_1.makePrismaClientClass({
   typeDefs,
   models,
-  endpoint: `https://jgamesdb-edc9ceb75a.herokuapp.com/prisma/dev`
+  endpoint: `http://178.62.61.229:4466/`
 });
 exports.prisma = new exports.Prisma();
 var models = [

@@ -1,8 +1,8 @@
 # Specifies the HTTP endpoint of your Prisma API.
 #endpoint: ''
 #endpoint: http://localhost:4466
-#endpoint: https://data.heroku.com/datastores/e3275590-b6aa-457e-8a2d-e0c6227f0134/jgames-prod/dev
-endpoint: https://jgamesdb-edc9ceb75a.herokuapp.com/prisma/dev
+#endpoint: https://jgamesdb-edc9ceb75a.herokuapp.com/prisma/dev
+endpoint: http://178.62.61.229:4466/
 
 # Defines your models, each model is mapped to the database as a table.
 datamodel: datamodel.prisma
